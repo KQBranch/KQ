@@ -28,12 +28,12 @@ jobs:
     - name: Upload FDD
       uses: actions/upload-artifact@v2
       with:
-        name: KQ-${{ github.sha }}-windows-x64
+        name: FDD-KQ-${{ github.sha }}-windows-x64
         path: KQ/bin/Release/netcoreapp3.1/win-x64/publish
     - name: Publish SCD for Windows x64
       run: dotnet publish KQ -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:PublishTrimmed=true
     - name: Upload SCD
       uses: actions/upload-artifact@v2
       with:
-        name: KQ-${{ github.sha }}-windows-x64
+        name: SCD-KQ-${{ github.sha }}-windows-x64
         path: KQ/bin/Release/netcoreapp3.1/win-x64/publish
