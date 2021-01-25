@@ -23,9 +23,16 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
-    - name: Publish self-contained for Windows x64
-      run: dotnet publish KQ -c Release -r win-x64
-    - name: Upload
+    - name: Publish FDD for Windows x64
+      run: dotnet publish KQ -c Release -r win-x64 --self-contained false /p:PublishSingleFile=true
+    - name: Upload FDD
+      uses: actions/upload-artifact@v2
+      with:
+        name: KQ-${{ github.sha }}-windows-x64
+        path: KQ/bin/Release/netcoreapp3.1/win-x64/publish
+    - name: Publish SCD for Windows x64
+      run: dotnet publish KQ -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:PublishTrimmed=true
+    - name: Upload SCD
       uses: actions/upload-artifact@v2
       with:
         name: KQ-${{ github.sha }}-windows-x64
