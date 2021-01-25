@@ -33,7 +33,7 @@ namespace KQ.View
                 Config.Instance = JsonSerializer.Deserialize<Model.Config>(configStr);
                 configStr = null;
             }
-            catch (Exception ex)
+            catch
             {
                 MessageBox.Show("Config is not valid!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Environment.Exit(1);
@@ -56,22 +56,48 @@ namespace KQ.View
             await session.ConnectAsync(options, Config.Instance.QQNumber);
             session.FriendMessageEvt += Session_FriendMessageEvt;
 
-            await Task.Run(() => UpdateMsgList(1000)).ConfigureAwait(false);
+            await Task.Run(() => UpdateList(1000)).ConfigureAwait(false);
         }
 
-        private void UpdateMsgList(int ms = 1000)
+        private void UpdateList(int ms = 1000)
         {
+            int counter = 0;
             while (true)
             {
-                this.Invoke(new Action(() =>
+                Invoke(new Action(() =>
                 {
+                    TssCurrentQInfo.Text = $"ID: {session.QQNumber} | Connection: {session.Connected}";
                     LstSessions.Items.Clear();
                     foreach (var i in HistoryMsg.Friend)
                     {
                         this.LstSessions.Items.Add(new QQContact(i.Key));
                     }
                 }));
+
+                if (counter == 0)
+                {
+                    LstContacts.Items.Clear();
+                    var contact = session.GetFriendListAsync().Result;
+                    foreach (var i in contact)
+                    {
+                        LstContacts.Items.Add(new Model.UnitInfo(i));
+                    }
+
+                    LstGroups.Items.Clear();
+                    var group = session.GetGroupListAsync().Result;
+                    foreach (var i in group)
+                    {
+                        LstGroups.Items.Add(new Model.UnitInfo(i));
+                    }
+                }
+
+                if (counter == 5 * 60)
+                {
+                    counter = 0;
+                }
+
                 Thread.Sleep(ms);
+                ++counter;
             }
         }
 
