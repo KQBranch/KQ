@@ -70,7 +70,7 @@ namespace KQ.View
                     LstSessions.Items.Clear();
                     foreach (var i in HistoryMsg.Friend)
                     {
-                        this.LstSessions.Items.Add(new QQContact(i.Key));
+                        this.LstSessions.Items.Add(new Model.BaseInfo(i.Value));
                     }
                 }));
 
@@ -101,7 +101,6 @@ namespace KQ.View
             }
         }
 
-
         private async Task<bool> Session_FriendMessageEvt(MiraiHttpSession sender, IFriendMessageEventArgs e)
         {
             var msg = (string.Join(null, (IEnumerable<IMessageBase>) e.Chain)).RemoveMirai();
@@ -111,11 +110,12 @@ namespace KQ.View
                 this.Invoke(new Action(() =>
                 {
                     RtbMessage.Text += "\r\n" +
-                                       $"{DateTime.Now:dd/MM/yyyy HH:mm:ss} {e.Sender.Name}:\r\n{msg}";
+                                       $"{DateTime.Now:dd/MM/yyyy HH:mm:ss} {e.Sender.Name}({e.Sender.Id}):\r\n{msg}";
                 }));
             }
 
-            HistoryMsg.AddFriendMsg(e.Sender.Id,
+            HistoryMsg.AddFriendMsg(
+                e.Sender,
                 msg,
                 DateTime.Now);
             return false;
@@ -125,44 +125,10 @@ namespace KQ.View
         {
         }
 
-        class QQContact
-        {
-            private IFriendInfo friendInfo;
-            private long qId = 0;
-
-            public string GetName()
-            {
-                if (friendInfo == null) return "";
-                return friendInfo.Name;
-            }
-
-            public long GetQID()
-            {
-                if (qId != 0)
-                    return qId;
-                return friendInfo.Id;
-            }
-
-            public override string ToString()
-            {
-                return $"{GetName()}({GetQID()})";
-            }
-
-            public QQContact(IFriendInfo ifi)
-            {
-                friendInfo = ifi;
-            }
-
-            public QQContact(long qid)
-            {
-                qId = qid;
-            }
-        }
-
         private void LstSessions_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (LstSessions.SelectedItem == null) return;
-            currentSession = ((QQContact) LstSessions.SelectedItem).GetQID();
+            currentSession = ((Model.BaseInfo) LstSessions.SelectedItem).Id;
             RtbMessage.Text = "Change session to " + currentSession + "\r\n";
             RtbMessage.Text += HistoryMsg.GetFriendHistoryMsg(currentSession);
         }

@@ -1,78 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
+using KQ.Model;
+using Mirai_CSharp.Models;
 
 namespace KQ.Controller
 {
     class HistoryMsg
     {
-        public static Dictionary<long, Queue<MsgInfo>> Group = new Dictionary<long, Queue<MsgInfo>>();
-        public static Dictionary<long, Queue<MsgInfo>> Friend = new Dictionary<long, Queue<MsgInfo>>();
+        public static Dictionary<long, HistoryMsgUnit> Group = new Dictionary<long, HistoryMsgUnit>();
+        public static Dictionary<long, HistoryMsgUnit> Friend = new Dictionary<long, HistoryMsgUnit>();
 
-        public class MsgInfo
-        {
-            public enum MsgType
-            {
-                Image,
-                Text,
-                Voice
-            }
 
-            private readonly string msgData;
-            private readonly long sender;
-            private readonly DateTime dateTime;
-            private readonly MsgType type;
-
-            public MsgInfo(DateTime dateTime, long sender, string msgData, MsgType type = MsgType.Text)
-            {
-                this.msgData = msgData;
-                this.dateTime = dateTime;
-                this.sender = sender;
-                this.type = type;
-            }
-
-            public string MsgData
-            {
-                get => msgData;
-            }
-
-            public long Sender
-            {
-                get => sender;
-            }
-
-            public DateTime DateTime
-            {
-                get => dateTime;
-            }
-
-            public MsgType Type
-            {
-                get => type;
-            }
-        }
-
-        public static void AddGroupMsg(long id, string msg, long sender, DateTime dateTime,
+        public static void AddGroupMsg(IBaseInfo groupInfo, string msg, IBaseInfo senderInfo, DateTime dateTime,
             MsgInfo.MsgType msgType = MsgInfo.MsgType.Text)
         {
-            if (!Group.ContainsKey(id))
+            if (!Group.ContainsKey(groupInfo.Id))
             {
-                Group.Add(id, new Queue<MsgInfo>());
+                Group.Add(groupInfo.Id, new HistoryMsgUnit(groupInfo));
             }
 
-            Group[id].Enqueue(new MsgInfo(dateTime, id, msg, msgType));
-            Group[id].ToLength(Config.Instance.HistoryLines);
+            Group[groupInfo.Id].Msg.Enqueue(new MsgInfo(dateTime, senderInfo, msg, msgType));
+            Group[groupInfo.Id].Msg.ToLength(Config.Instance.HistoryLines);
         }
 
-        public static void AddFriendMsg(long id, string msg, DateTime dateTime,
+        public static void AddFriendMsg(IBaseInfo senderInfo, string msg, DateTime dateTime,
             MsgInfo.MsgType msgType = MsgInfo.MsgType.Text)
         {
-            if (!Friend.ContainsKey(id))
+            if (!Friend.ContainsKey(senderInfo.Id))
             {
-                Friend.Add(id, new Queue<MsgInfo>());
+                Friend.Add(senderInfo.Id, new HistoryMsgUnit(senderInfo));
             }
 
-            Friend[id].Enqueue(new MsgInfo(dateTime, id, msg, msgType));
-            Group[id].ToLength(Config.Instance.HistoryLines);
+            Friend[senderInfo.Id].Msg.Enqueue(new MsgInfo(dateTime, senderInfo, msg, msgType));
+            Friend[senderInfo.Id].Msg.ToLength(Config.Instance.HistoryLines);
         }
 
         public static string GetFriendHistoryMsg(long id)
@@ -80,7 +40,7 @@ namespace KQ.Controller
             if (!Friend.ContainsKey(id))
                 return string.Empty;
 
-            return Friend[id].ToRtbString();
+            return Friend[id].Msg.ToRtbString();
         }
 
         public static string GetGroupHistoryMsg(long id)
@@ -88,7 +48,7 @@ namespace KQ.Controller
             if (!Group.ContainsKey(id))
                 return string.Empty;
 
-            return Group[id].ToRtbString();
+            return Group[id].Msg.ToRtbString();
         }
     }
 }
