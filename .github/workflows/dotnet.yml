@@ -24,9 +24,9 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Publish self-contained for Windows x64
-        run: dotnet publish KQ -c Release -r win-x64
+      run: dotnet publish KQ -c Release -r win-x64
     - name: Upload
-        uses: actions/upload-artifact@v2
-        with:
+      uses: actions/upload-artifact@v2
+      with:
           name: KQ-${{ github.sha }}-windows-x64
           path: KQ/bin/Release/
