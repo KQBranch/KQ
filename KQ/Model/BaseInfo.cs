@@ -4,26 +4,25 @@ namespace KQ.Model
 {
     class BaseInfo : IBaseInfo
     {
-        private IBaseInfo _baseInfo;
-
         public override string ToString()
         {
-            return $"{_baseInfo.Name}({_baseInfo.Id})";
+            return $"{Name}({Id})";
         }
 
         public BaseInfo(IBaseInfo baseInfo)
         {
-            _baseInfo = baseInfo;
+            Id = baseInfo.Id;
+            Name = baseInfo.Name;
         }
 
-        public long Id
+        public BaseInfo(long id, string name)
         {
-            get => _baseInfo.Id;
+            Id = id;
+            Name = name;
         }
 
-        public string Name
-        {
-            get => _baseInfo.Name;
-        }
+        public long Id { get; }
+
+        public string Name { get; }
     }
 }

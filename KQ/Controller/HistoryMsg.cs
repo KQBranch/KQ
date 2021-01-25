@@ -23,16 +23,16 @@ namespace KQ.Controller
             Group[groupInfo.Id].Msg.ToLength(Config.Instance.HistoryLines);
         }
 
-        public static void AddFriendMsg(IBaseInfo senderInfo, string msg, DateTime dateTime,
+        public static void AddFriendMsg(IBaseInfo groupInfo, string msg, DateTime dateTime,  IBaseInfo senderInfo,
             MsgInfo.MsgType msgType = MsgInfo.MsgType.Text)
         {
-            if (!Friend.ContainsKey(senderInfo.Id))
+            if (!Friend.ContainsKey(groupInfo.Id))
             {
-                Friend.Add(senderInfo.Id, new HistoryMsgUnit(senderInfo));
+                Friend.Add(groupInfo.Id, new HistoryMsgUnit(senderInfo));
             }
 
-            Friend[senderInfo.Id].Msg.Enqueue(new MsgInfo(dateTime, senderInfo, msg, msgType));
-            Friend[senderInfo.Id].Msg.ToLength(Config.Instance.HistoryLines);
+            Friend[groupInfo.Id].Msg.Enqueue(new MsgInfo(dateTime, senderInfo, msg, msgType));
+            Friend[groupInfo.Id].Msg.ToLength(Config.Instance.HistoryLines);
         }
 
         public static string GetFriendHistoryMsg(long id)

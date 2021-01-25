@@ -55,6 +55,8 @@ namespace KQ.View
             session = new MiraiHttpSession();
             await session.ConnectAsync(options, Config.Instance.QQNumber);
             session.FriendMessageEvt += Session_FriendMessageEvt;
+            
+            TssCurrentQInfo.Text = $"ID: {session.QQNumber} | Connection: {session.Connected}";
 
             await Task.Run(() => UpdateList(1000)).ConfigureAwait(false);
         }
@@ -101,7 +103,9 @@ namespace KQ.View
             }
         }
 
+#pragma warning disable 1998
         private async Task<bool> Session_FriendMessageEvt(MiraiHttpSession sender, IFriendMessageEventArgs e)
+#pragma warning restore 1998
         {
             var msg = (string.Join(null, (IEnumerable<IMessageBase>) e.Chain)).RemoveMirai();
 
@@ -110,14 +114,15 @@ namespace KQ.View
                 this.Invoke(new Action(() =>
                 {
                     RtbMessage.Text += "\r\n" +
-                                       $"{DateTime.Now:dd/MM/yyyy HH:mm:ss} {e.Sender.Name}({e.Sender.Id}):\r\n{msg}";
+                                       $"{DateTime.Now:dd/MM/yyyy HH:mm:ss} {e.Sender.Name} ({e.Sender.Id}):\r\n{msg}";
                 }));
             }
 
             HistoryMsg.AddFriendMsg(
                 e.Sender,
                 msg,
-                DateTime.Now);
+                DateTime.Now,
+                e.Sender);
             return false;
         }
 
@@ -137,12 +142,20 @@ namespace KQ.View
         {
             if (currentSession != 0)
             {
+                var time = DateTime.Now;
+                var msg = TxtSendMsg.Text;
                 session.SendFriendMessageAsync(currentSession, new IMessageBase[]
                 {
-                    new PlainMessage($"{TxtSendMsg.Text}")
+                    new PlainMessage($"{msg}")
                 });
-                RtbMessage.Text += $"\r\n{DateTime.Now:dd/MM/yyyy HH:mm:ss} You:\r\n{TxtSendMsg.Text}";
+                RtbMessage.Text += $"\r\n{time:dd/MM/yyyy HH:mm:ss} Me ({Config.Instance.QQNumber}):\r\n{msg}";
                 TxtSendMsg.Text = "";
+                HistoryMsg.AddFriendMsg(
+                    new Model.BaseInfo(currentSession, null) , 
+                    msg,
+                    time,
+                    new Model.BaseInfo(Config.Instance.QQNumber, "Me")
+                    );
             }
         }
     }
