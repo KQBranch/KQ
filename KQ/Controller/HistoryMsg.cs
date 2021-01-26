@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using KQ.Model;
+
 using Mirai_CSharp.Models;
 
 namespace KQ.Controller
@@ -11,7 +13,7 @@ namespace KQ.Controller
         public static Dictionary<long, HistoryMsgUnit> Friend = new Dictionary<long, HistoryMsgUnit>();
 
 
-        public static void AddGroupMsg(IBaseInfo groupInfo, string msg, IBaseInfo senderInfo, DateTime dateTime,
+        public static void AddGroupMsg(IBaseInfo groupInfo, string msg, DateTime dateTime, IBaseInfo senderInfo,
             MsgInfo.MsgType msgType = MsgInfo.MsgType.Text)
         {
             if (!Group.ContainsKey(groupInfo.Id))
@@ -23,7 +25,7 @@ namespace KQ.Controller
             Group[groupInfo.Id].Msg.ToLength(Config.Instance.HistoryLines);
         }
 
-        public static void AddFriendMsg(IBaseInfo groupInfo, string msg, DateTime dateTime,  IBaseInfo senderInfo,
+        public static void AddFriendMsg(IBaseInfo groupInfo, string msg, DateTime dateTime, IBaseInfo senderInfo,
             MsgInfo.MsgType msgType = MsgInfo.MsgType.Text)
         {
             if (!Friend.ContainsKey(groupInfo.Id))

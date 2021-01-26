@@ -35,22 +35,25 @@ namespace KQ.View
             this.StsStatus = new System.Windows.Forms.StatusStrip();
             this.TssCurrentQInfo = new System.Windows.Forms.ToolStripStatusLabel();
             this.TacMainTabControl = new System.Windows.Forms.TabControl();
-            this.TapContacts = new System.Windows.Forms.TabPage();
-            this.LstSessions = new System.Windows.Forms.ListBox();
             this.TapMessages = new System.Windows.Forms.TabPage();
-            this.TapGroups = new System.Windows.Forms.TabPage();
+            this.LstSessions = new System.Windows.Forms.ListBox();
+            this.TabGroupMsg = new System.Windows.Forms.TabPage();
+            this.LstGroupMsg = new System.Windows.Forms.ListBox();
+            this.TapContacts = new System.Windows.Forms.TabPage();
             this.LstContacts = new System.Windows.Forms.ListBox();
+            this.TapGroups = new System.Windows.Forms.TabPage();
             this.LstGroups = new System.Windows.Forms.ListBox();
             this.StsStatus.SuspendLayout();
             this.TacMainTabControl.SuspendLayout();
-            this.TapContacts.SuspendLayout();
             this.TapMessages.SuspendLayout();
+            this.TabGroupMsg.SuspendLayout();
+            this.TapContacts.SuspendLayout();
             this.TapGroups.SuspendLayout();
             this.SuspendLayout();
             // 
             // BtnSend
             // 
-            this.BtnSend.Location = new System.Drawing.Point(783, 409);
+            this.BtnSend.Location = new System.Drawing.Point(783, 405);
             this.BtnSend.Name = "BtnSend";
             this.BtnSend.Size = new System.Drawing.Size(94, 29);
             this.BtnSend.TabIndex = 0;
@@ -72,7 +75,7 @@ namespace KQ.View
             this.TxtSendMsg.Location = new System.Drawing.Point(250, 330);
             this.TxtSendMsg.Multiline = true;
             this.TxtSendMsg.Name = "TxtSendMsg";
-            this.TxtSendMsg.Size = new System.Drawing.Size(626, 66);
+            this.TxtSendMsg.Size = new System.Drawing.Size(527, 104);
             this.TxtSendMsg.TabIndex = 3;
             // 
             // StsStatus
@@ -94,67 +97,86 @@ namespace KQ.View
             // 
             // TacMainTabControl
             // 
+            this.TacMainTabControl.Alignment = System.Windows.Forms.TabAlignment.Left;
             this.TacMainTabControl.Controls.Add(this.TapMessages);
+            this.TacMainTabControl.Controls.Add(this.TabGroupMsg);
             this.TacMainTabControl.Controls.Add(this.TapContacts);
             this.TacMainTabControl.Controls.Add(this.TapGroups);
             this.TacMainTabControl.Location = new System.Drawing.Point(12, 12);
+            this.TacMainTabControl.Multiline = true;
             this.TacMainTabControl.Name = "TacMainTabControl";
             this.TacMainTabControl.SelectedIndex = 0;
             this.TacMainTabControl.Size = new System.Drawing.Size(236, 426);
             this.TacMainTabControl.TabIndex = 6;
             // 
-            // TapContacts
-            // 
-            this.TapContacts.Controls.Add(this.LstContacts);
-            this.TapContacts.Location = new System.Drawing.Point(4, 29);
-            this.TapContacts.Name = "TapContacts";
-            this.TapContacts.Padding = new System.Windows.Forms.Padding(3);
-            this.TapContacts.Size = new System.Drawing.Size(228, 393);
-            this.TapContacts.TabIndex = 1;
-            this.TapContacts.Text = "Contacts";
-            this.TapContacts.UseVisualStyleBackColor = true;
-            // 
-            // LstSessions
-            // 
-            this.LstSessions.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.LstSessions.FormattingEnabled = true;
-            this.LstSessions.ItemHeight = 20;
-            this.LstSessions.Location = new System.Drawing.Point(3, 3);
-            this.LstSessions.Name = "LstSessions";
-            this.LstSessions.Size = new System.Drawing.Size(222, 387);
-            this.LstSessions.TabIndex = 4;
-            this.LstSessions.SelectedIndexChanged += new System.EventHandler(this.LstSessions_SelectedIndexChanged);
-            // 
             // TapMessages
             // 
             this.TapMessages.Controls.Add(this.LstSessions);
-            this.TapMessages.Location = new System.Drawing.Point(4, 29);
+            this.TapMessages.Location = new System.Drawing.Point(30, 4);
             this.TapMessages.Name = "TapMessages";
-            this.TapMessages.Padding = new System.Windows.Forms.Padding(3);
-            this.TapMessages.Size = new System.Drawing.Size(228, 393);
+            this.TapMessages.Size = new System.Drawing.Size(202, 418);
             this.TapMessages.TabIndex = 0;
             this.TapMessages.Text = "Messages";
             this.TapMessages.UseVisualStyleBackColor = true;
             // 
-            // TapGroups
+            // LstSessions
             // 
-            this.TapGroups.Controls.Add(this.LstGroups);
-            this.TapGroups.Location = new System.Drawing.Point(4, 29);
-            this.TapGroups.Name = "TapGroups";
-            this.TapGroups.Size = new System.Drawing.Size(228, 393);
-            this.TapGroups.TabIndex = 2;
-            this.TapGroups.Text = "Groups";
-            this.TapGroups.UseVisualStyleBackColor = true;
+            this.LstSessions.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.LstSessions.ItemHeight = 20;
+            this.LstSessions.Location = new System.Drawing.Point(0, 0);
+            this.LstSessions.Name = "LstSessions";
+            this.LstSessions.Size = new System.Drawing.Size(202, 418);
+            this.LstSessions.TabIndex = 4;
+            this.LstSessions.SelectedIndexChanged += new System.EventHandler(this.LstSessions_SelectedIndexChanged);
+            // 
+            // TabGroupMsg
+            // 
+            this.TabGroupMsg.Controls.Add(this.LstGroupMsg);
+            this.TabGroupMsg.Location = new System.Drawing.Point(30, 4);
+            this.TabGroupMsg.Name = "TabGroupMsg";
+            this.TabGroupMsg.Size = new System.Drawing.Size(202, 418);
+            this.TabGroupMsg.TabIndex = 3;
+            this.TabGroupMsg.Text = "Group Messages";
+            this.TabGroupMsg.UseVisualStyleBackColor = true;
+            // 
+            // LstGroupMsg
+            // 
+            this.LstGroupMsg.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.LstGroupMsg.ItemHeight = 20;
+            this.LstGroupMsg.Location = new System.Drawing.Point(0, 0);
+            this.LstGroupMsg.Name = "LstGroupMsg";
+            this.LstGroupMsg.Size = new System.Drawing.Size(202, 418);
+            this.LstGroupMsg.TabIndex = 0;
+            this.LstGroupMsg.SelectedIndexChanged += new System.EventHandler(this.LstGroupMsg_SelectedIndexChanged);
+            // 
+            // TapContacts
+            // 
+            this.TapContacts.Controls.Add(this.LstContacts);
+            this.TapContacts.Location = new System.Drawing.Point(30, 4);
+            this.TapContacts.Name = "TapContacts";
+            this.TapContacts.Size = new System.Drawing.Size(202, 418);
+            this.TapContacts.TabIndex = 1;
+            this.TapContacts.Text = "Contacts";
+            this.TapContacts.UseVisualStyleBackColor = true;
             // 
             // LstContacts
             // 
             this.LstContacts.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.LstContacts.FormattingEnabled = true;
             this.LstContacts.ItemHeight = 20;
-            this.LstContacts.Location = new System.Drawing.Point(3, 3);
+            this.LstContacts.Location = new System.Drawing.Point(0, 0);
             this.LstContacts.Name = "LstContacts";
-            this.LstContacts.Size = new System.Drawing.Size(222, 387);
+            this.LstContacts.Size = new System.Drawing.Size(202, 418);
             this.LstContacts.TabIndex = 0;
+            // 
+            // TapGroups
+            // 
+            this.TapGroups.Controls.Add(this.LstGroups);
+            this.TapGroups.Location = new System.Drawing.Point(30, 4);
+            this.TapGroups.Name = "TapGroups";
+            this.TapGroups.Size = new System.Drawing.Size(202, 418);
+            this.TapGroups.TabIndex = 2;
+            this.TapGroups.Text = "Groups";
+            this.TapGroups.UseVisualStyleBackColor = true;
             // 
             // LstGroups
             // 
@@ -163,13 +185,14 @@ namespace KQ.View
             this.LstGroups.ItemHeight = 20;
             this.LstGroups.Location = new System.Drawing.Point(0, 0);
             this.LstGroups.Name = "LstGroups";
-            this.LstGroups.Size = new System.Drawing.Size(228, 393);
+            this.LstGroups.Size = new System.Drawing.Size(202, 418);
             this.LstGroups.TabIndex = 0;
             // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(890, 478);
             this.Controls.Add(this.TacMainTabControl);
             this.Controls.Add(this.StsStatus);
@@ -182,8 +205,9 @@ namespace KQ.View
             this.StsStatus.ResumeLayout(false);
             this.StsStatus.PerformLayout();
             this.TacMainTabControl.ResumeLayout(false);
-            this.TapContacts.ResumeLayout(false);
             this.TapMessages.ResumeLayout(false);
+            this.TabGroupMsg.ResumeLayout(false);
+            this.TapContacts.ResumeLayout(false);
             this.TapGroups.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -204,6 +228,8 @@ namespace KQ.View
         private System.Windows.Forms.ListBox LstContacts;
         private System.Windows.Forms.TabPage TapGroups;
         private System.Windows.Forms.ListBox LstGroups;
+        private System.Windows.Forms.TabPage TabGroupMsg;
+        private System.Windows.Forms.ListBox LstGroupMsg;
     }
 }
 

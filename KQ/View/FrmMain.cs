@@ -19,6 +19,7 @@ namespace KQ.View
     public partial class FrmMain : Form
     {
         long currentSession = 0;
+        Model.Enums.SessionType currentType = Model.Enums.SessionType.None;
         MiraiHttpSession session;
 
         public FrmMain()
@@ -57,13 +58,35 @@ namespace KQ.View
 
             session = new MiraiHttpSession();
             await session.ConnectAsync(options, Config.Instance.QQNumber);
-            
+
             session.FriendMessageEvt += Session_FriendMessageEvt;
             session.GroupNameChangedEvt += Session_GroupNameChangedEvt;
-            
+            session.GroupMessageEvt += Session_GroupMessageEvt;
+
             TssCurrentQInfo.Text = $"ID: {session.QQNumber} | Connection: {session.Connected}";
 
             await Task.Run(() => UpdateList(1000)).ConfigureAwait(false);
+        }
+
+        private async Task<bool> Session_GroupMessageEvt(MiraiHttpSession sender, IGroupMessageEventArgs e)
+        {
+            var msg = (string.Join(null, (IEnumerable<IMessageBase>)e.Chain)).RemoveMirai();
+
+            if (e.Sender.Group.Id == currentSession && currentType == Model.Enums.SessionType.GroupMsg)
+            {
+                this.Invoke(new Action(() =>
+                {
+                    RtbMessage.Text += "\r\n" +
+                                       $"{DateTime.Now:dd/MM/yyyy HH:mm:ss} {e.Sender.Name} ({e.Sender.Id}):\r\n{msg}";
+                }));
+            }
+
+            HistoryMsg.AddGroupMsg(
+                e.Sender.Group,
+                msg,
+                DateTime.Now,
+                e.Sender);
+            return false;
         }
 
         private async Task<bool> Session_GroupNameChangedEvt(MiraiHttpSession sender, IGroupNameChangedEventArgs e)
@@ -87,6 +110,11 @@ namespace KQ.View
                     foreach (var i in HistoryMsg.Friend)
                     {
                         this.LstSessions.Items.Add(new Model.BaseInfo(i.Value));
+                    }
+                    LstGroupMsg.Items.Clear();
+                    foreach (var i in HistoryMsg.Group)
+                    {
+                        this.LstGroupMsg.Items.Add(new Model.BaseInfo(i.Value));
                     }
                 }));
 
@@ -121,9 +149,9 @@ namespace KQ.View
         private async Task<bool> Session_FriendMessageEvt(MiraiHttpSession sender, IFriendMessageEventArgs e)
 #pragma warning restore 1998
         {
-            var msg = (string.Join(null, (IEnumerable<IMessageBase>) e.Chain)).RemoveMirai();
+            var msg = (string.Join(null, (IEnumerable<IMessageBase>)e.Chain)).RemoveMirai();
 
-            if (e.Sender.Id == currentSession)
+            if (e.Sender.Id == currentSession && currentType == Model.Enums.SessionType.PrivateMsg)
             {
                 this.Invoke(new Action(() =>
                 {
@@ -147,30 +175,58 @@ namespace KQ.View
         private void LstSessions_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (LstSessions.SelectedItem == null) return;
-            currentSession = ((Model.BaseInfo) LstSessions.SelectedItem).Id;
+            currentSession = ((Model.BaseInfo)LstSessions.SelectedItem).Id;
+            currentType = Model.Enums.SessionType.PrivateMsg;
             RtbMessage.Text = "Change session to " + currentSession + "\r\n";
             RtbMessage.Text += HistoryMsg.GetFriendHistoryMsg(currentSession);
         }
 
+        private void LstGroupMsg_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (LstGroupMsg.SelectedItem == null) return;
+            currentSession = ((Model.BaseInfo)LstGroupMsg.SelectedItem).Id;
+            currentType = Model.Enums.SessionType.GroupMsg;
+            RtbMessage.Text = "Change session to " + currentSession + "\r\n";
+            RtbMessage.Text += HistoryMsg.GetGroupHistoryMsg(currentSession);
+        }
+
         private void BtnSend_Click(object sender, EventArgs e)
         {
-            if (currentSession != 0)
+            if (currentSession != 0 && currentType != Model.Enums.SessionType.None)
             {
                 var time = DateTime.Now;
                 var msg = TxtSendMsg.Text;
-                session.SendFriendMessageAsync(currentSession, new IMessageBase[]
-                {
-                    new PlainMessage($"{msg}")
-                });
+
                 RtbMessage.Text += $"\r\n{time:dd/MM/yyyy HH:mm:ss} Me ({Config.Instance.QQNumber}):\r\n{msg}";
                 TxtSendMsg.Text = "";
-                HistoryMsg.AddFriendMsg(
-                    new Model.BaseInfo(currentSession, null) , 
-                    msg,
-                    time,
-                    new Model.BaseInfo(Config.Instance.QQNumber, "Me")
-                    );
+                if (currentType == Model.Enums.SessionType.PrivateMsg)
+                {
+                    session.SendFriendMessageAsync(currentSession, new IMessageBase[]
+                    {
+                    new PlainMessage($"{msg}")
+                    });
+                    HistoryMsg.AddFriendMsg(
+                        new Model.BaseInfo(currentSession, null),
+                        msg,
+                        time,
+                        new Model.BaseInfo(Config.Instance.QQNumber, "Me")
+                        );
+                }
+                else
+                {
+                    session.SendGroupMessageAsync(currentSession, new IMessageBase[]
+                    {
+                    new PlainMessage($"{msg}")
+                    });
+                    HistoryMsg.AddGroupMsg(
+                        new Model.BaseInfo(currentSession, null),
+                        msg,
+                        time,
+                        new Model.BaseInfo(Config.Instance.QQNumber, "Me")
+                        );
+                }
             }
         }
+
     }
 }
