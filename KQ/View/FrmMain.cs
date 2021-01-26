@@ -1,12 +1,14 @@
-﻿using Mirai_CSharp;
-using Mirai_CSharp.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
+using Mirai_CSharp;
+using Mirai_CSharp.Models;
+
 using KQ.Controller;
 
 // ReSharper disable InconsistentNaming
@@ -55,11 +57,22 @@ namespace KQ.View
 
             session = new MiraiHttpSession();
             await session.ConnectAsync(options, Config.Instance.QQNumber);
+            
             session.FriendMessageEvt += Session_FriendMessageEvt;
+            session.GroupNameChangedEvt += Session_GroupNameChangedEvt;
             
             TssCurrentQInfo.Text = $"ID: {session.QQNumber} | Connection: {session.Connected}";
 
             await Task.Run(() => UpdateList(1000)).ConfigureAwait(false);
+        }
+
+        private async Task<bool> Session_GroupNameChangedEvt(MiraiHttpSession sender, IGroupNameChangedEventArgs e)
+        {
+            if (HistoryMsg.Group.ContainsKey(e.Group.Id))
+            {
+                HistoryMsg.Group[e.Group.Id].Name = e.Group.Name;
+            }
+            return false;
         }
 
         private void UpdateList(int ms = 1000)

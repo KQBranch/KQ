@@ -5,23 +5,23 @@ namespace KQ.Model
 {
     public class HistoryMsgUnit : IBaseInfo
     {
-        public HistoryMsgUnit(IBaseInfo info)
-        {
-            _info = info;
-            Msg = new Queue<Model.MsgInfo>();
-        }
-        
-        private readonly IBaseInfo _info;
         public Queue<Model.MsgInfo> Msg;
 
-        public long Id
+        public long Id { get; set; }
+        public string Name { get; set; }
+
+        public HistoryMsgUnit(IBaseInfo info)
         {
-            get => _info.Id;
+            Id = info.Id;
+            Name = info.Name;
+            Msg = new Queue<Model.MsgInfo>();
         }
 
-        public string Name
+        public HistoryMsgUnit(long id, string name)
         {
-            get => _info.Name;
+            Id = id;
+            Name = name;
+            Msg = new Queue<Model.MsgInfo>();
         }
     }
 }
