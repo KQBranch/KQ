@@ -9,6 +9,8 @@ using Mirai_CSharp;
 using Mirai_CSharp.Models;
 using KQ.Controller;
 
+#pragma warning disable 1998
+
 // ReSharper disable InconsistentNaming
 // ReSharper disable LocalizableElement
 
@@ -32,7 +34,6 @@ namespace KQ.View
             {
                 var configStr = File.ReadAllText("config.json");
                 Config.Instance = JsonSerializer.Deserialize<Model.Config>(configStr);
-                configStr = null;
             }
             catch
             {
@@ -63,7 +64,7 @@ namespace KQ.View
 
             TssCurrentQInfo.Text = $"ID: {session.QQNumber} | Connection: {session.Connected}";
 
-            await Task.Run(() => UpdateList(1000)).ConfigureAwait(false);
+            await Task.Run(() => UpdateList(500)).ConfigureAwait(false);
         }
 
         private async Task<bool> Session_GroupMessageEvt(MiraiHttpSession sender, IGroupMessageEventArgs e)
@@ -120,12 +121,9 @@ namespace KQ.View
             int counter = 0;
             while (true)
             {
-                Invoke(new Action(() =>
-                {
-                    TssCurrentQInfo.Text = $"ID: {session.QQNumber} | Connection: {session.Connected}";
-                    UpdateListBoxItems(ref LstSessions, ref HistoryMsg.Friend);
-                    UpdateListBoxItems(ref LstGroupMsg, ref HistoryMsg.Group);
-                }));
+                TssCurrentQInfo.Text = $"ID: {session.QQNumber} | Connection: {session.Connected}";
+                UpdateListBoxItems(ref LstSessions, ref HistoryMsg.Friend);
+                UpdateListBoxItems(ref LstGroupMsg, ref HistoryMsg.Group);
 
                 if (counter == 0)
                 {
@@ -146,9 +144,7 @@ namespace KQ.View
             }
         }
 
-#pragma warning disable 1998
         private async Task<bool> Session_FriendMessageEvt(MiraiHttpSession sender, IFriendMessageEventArgs e)
-#pragma warning restore 1998
         {
             var msg = (string.Join(null, (IEnumerable<IMessageBase>) e.Chain)).RemoveMirai();
             var time = DateTime.Now;
