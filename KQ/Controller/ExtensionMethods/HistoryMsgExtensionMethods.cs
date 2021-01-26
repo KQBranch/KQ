@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 
-namespace KQ.Controller
+namespace KQ.Controller.ExtensionMethods
 {
     static class HistoryMsgExtensionMethods
     {

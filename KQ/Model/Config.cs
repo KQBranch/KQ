@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-// ReSharper disable UnusedAutoPropertyAccessor.Global
+﻿// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace KQ.Model
 {

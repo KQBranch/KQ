@@ -69,7 +69,7 @@ namespace KQ.View
 
         private async Task<bool> Session_GroupMessageEvt(MiraiHttpSession sender, IGroupMessageEventArgs e)
         {
-            var msg = (string.Join(null, (IEnumerable<IMessageBase>) e.Chain)).RemoveMirai();
+            var msg = string.Join(null, (IEnumerable<IMessageBase>) e.Chain[1..]);
             var time = DateTime.Now;
             if (e.Sender.Group.Id == currentSession && currentType == Model.Enums.SessionType.GroupMsg)
             {
@@ -146,7 +146,7 @@ namespace KQ.View
 
         private async Task<bool> Session_FriendMessageEvt(MiraiHttpSession sender, IFriendMessageEventArgs e)
         {
-            var msg = (string.Join(null, (IEnumerable<IMessageBase>) e.Chain)).RemoveMirai();
+            var msg = string.Join(null, (IEnumerable<IMessageBase>) e.Chain[1..]);
             var time = DateTime.Now;
             if (e.Sender.Id == currentSession && currentType == Model.Enums.SessionType.PrivateMsg)
             {

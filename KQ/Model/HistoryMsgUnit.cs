@@ -5,7 +5,7 @@ namespace KQ.Model
 {
     public class HistoryMsgUnit : IBaseInfo
     {
-        public Queue<Model.MsgInfo> Msg;
+        public Queue<MsgInfo> Msg;
 
         public long Id { get; set; }
         public string Name { get; set; }
@@ -14,14 +14,14 @@ namespace KQ.Model
         {
             Id = info.Id;
             Name = info.Name;
-            Msg = new Queue<Model.MsgInfo>();
+            Msg = new Queue<MsgInfo>();
         }
 
         public HistoryMsgUnit(long id, string name)
         {
             Id = id;
             Name = name;
-            Msg = new Queue<Model.MsgInfo>();
+            Msg = new Queue<MsgInfo>();
         }
     }
 }
