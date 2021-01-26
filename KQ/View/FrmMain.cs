@@ -47,6 +47,7 @@ namespace KQ.View
 
         private async Task InitializeMirai()
         {
+            TssCurrentQInfo.Text = $"ID: {Config.Instance.QQNumber} | Connection: False";
             MiraiHttpSessionOptions options = new MiraiHttpSessionOptions(
                 Config.Instance.Address,
                 Config.Instance.Port,
