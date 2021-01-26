@@ -5,10 +5,8 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
 using Mirai_CSharp;
 using Mirai_CSharp.Models;
-
 using KQ.Controller;
 
 // ReSharper disable InconsistentNaming
@@ -70,7 +68,7 @@ namespace KQ.View
 
         private async Task<bool> Session_GroupMessageEvt(MiraiHttpSession sender, IGroupMessageEventArgs e)
         {
-            var msg = (string.Join(null, (IEnumerable<IMessageBase>)e.Chain)).RemoveMirai();
+            var msg = (string.Join(null, (IEnumerable<IMessageBase>) e.Chain)).RemoveMirai();
 
             if (e.Sender.Group.Id == currentSession && currentType == Model.Enums.SessionType.GroupMsg)
             {
@@ -95,7 +93,26 @@ namespace KQ.View
             {
                 HistoryMsg.Group[e.Group.Id].Name = e.Group.Name;
             }
+
             return false;
+        }
+
+        private void UpdateListBoxItems(ref ListBox listBox, Dictionary<long, Model.HistoryMsgUnit> dic)
+        {
+            listBox.Items.Clear();
+            foreach (var i in dic)
+            {
+                listBox.Items.Add(new Model.BaseInfo(i.Value));
+            }
+        }
+
+        private void UpdateListBoxItems(ref ListBox listBox, IEnumerable<IBaseInfo> infos)
+        {
+            listBox.Items.Clear();
+            foreach (var i in infos)
+            {
+                listBox.Items.Add(new Model.BaseInfo(i));
+            }
         }
 
         private void UpdateList(int ms = 1000)
@@ -106,33 +123,17 @@ namespace KQ.View
                 Invoke(new Action(() =>
                 {
                     TssCurrentQInfo.Text = $"ID: {session.QQNumber} | Connection: {session.Connected}";
-                    LstSessions.Items.Clear();
-                    foreach (var i in HistoryMsg.Friend)
-                    {
-                        this.LstSessions.Items.Add(new Model.BaseInfo(i.Value));
-                    }
-                    LstGroupMsg.Items.Clear();
-                    foreach (var i in HistoryMsg.Group)
-                    {
-                        this.LstGroupMsg.Items.Add(new Model.BaseInfo(i.Value));
-                    }
+                    UpdateListBoxItems(ref LstSessions, HistoryMsg.Friend);
+                    UpdateListBoxItems(ref LstGroupMsg, HistoryMsg.Group);
                 }));
 
                 if (counter == 0)
                 {
-                    LstContacts.Items.Clear();
                     var contact = session.GetFriendListAsync().Result;
-                    foreach (var i in contact)
-                    {
-                        LstContacts.Items.Add(new Model.UnitInfo(i));
-                    }
+                    UpdateListBoxItems(ref LstContacts, contact);
 
-                    LstGroups.Items.Clear();
                     var group = session.GetGroupListAsync().Result;
-                    foreach (var i in group)
-                    {
-                        LstGroups.Items.Add(new Model.UnitInfo(i));
-                    }
+                    UpdateListBoxItems(ref LstGroups, group);
                 }
 
                 if (counter == 5 * 60)
@@ -149,7 +150,7 @@ namespace KQ.View
         private async Task<bool> Session_FriendMessageEvt(MiraiHttpSession sender, IFriendMessageEventArgs e)
 #pragma warning restore 1998
         {
-            var msg = (string.Join(null, (IEnumerable<IMessageBase>)e.Chain)).RemoveMirai();
+            var msg = (string.Join(null, (IEnumerable<IMessageBase>) e.Chain)).RemoveMirai();
 
             if (e.Sender.Id == currentSession && currentType == Model.Enums.SessionType.PrivateMsg)
             {
@@ -175,7 +176,7 @@ namespace KQ.View
         private void LstSessions_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (LstSessions.SelectedItem == null) return;
-            currentSession = ((Model.BaseInfo)LstSessions.SelectedItem).Id;
+            currentSession = ((Model.BaseInfo) LstSessions.SelectedItem).Id;
             currentType = Model.Enums.SessionType.PrivateMsg;
             RtbMessage.Text = "Change session to " + currentSession + "\r\n";
             RtbMessage.Text += HistoryMsg.GetFriendHistoryMsg(currentSession);
@@ -184,7 +185,7 @@ namespace KQ.View
         private void LstGroupMsg_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (LstGroupMsg.SelectedItem == null) return;
-            currentSession = ((Model.BaseInfo)LstGroupMsg.SelectedItem).Id;
+            currentSession = ((Model.BaseInfo) LstGroupMsg.SelectedItem).Id;
             currentType = Model.Enums.SessionType.GroupMsg;
             RtbMessage.Text = "Change session to " + currentSession + "\r\n";
             RtbMessage.Text += HistoryMsg.GetGroupHistoryMsg(currentSession);
@@ -203,30 +204,29 @@ namespace KQ.View
                 {
                     session.SendFriendMessageAsync(currentSession, new IMessageBase[]
                     {
-                    new PlainMessage($"{msg}")
+                        new PlainMessage($"{msg}")
                     });
                     HistoryMsg.AddFriendMsg(
                         new Model.BaseInfo(currentSession, null),
                         msg,
                         time,
                         new Model.BaseInfo(Config.Instance.QQNumber, "Me")
-                        );
+                    );
                 }
                 else
                 {
                     session.SendGroupMessageAsync(currentSession, new IMessageBase[]
                     {
-                    new PlainMessage($"{msg}")
+                        new PlainMessage($"{msg}")
                     });
                     HistoryMsg.AddGroupMsg(
                         new Model.BaseInfo(currentSession, null),
                         msg,
                         time,
                         new Model.BaseInfo(Config.Instance.QQNumber, "Me")
-                        );
+                    );
                 }
             }
         }
-
     }
 }
