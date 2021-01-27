@@ -18,9 +18,13 @@ namespace KQ.View
 {
     public partial class FrmMain : Form
     {
-        long currentSession = 0;
-        Model.Enums.SessionType currentType = Model.Enums.SessionType.None;
+        // ReSharper disable once RedundantDefaultMemberInitializer
+        private long currentSession = 0;
+
+        // ReSharper disable once RedundantDefaultMemberInitializer
         private string currentName = null;
+
+        private Model.Enums.SessionType currentType = Model.Enums.SessionType.None;
         MiraiHttpSession session;
 
         public FrmMain()
@@ -207,6 +211,8 @@ namespace KQ.View
                 Thread.Sleep(ms);
                 ++counter;
             }
+
+            // ReSharper disable once FunctionNeverReturns
         }
 
         #endregion

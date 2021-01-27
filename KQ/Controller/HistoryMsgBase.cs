@@ -20,7 +20,7 @@ namespace KQ.Controller
             }
 
             Dic[groupInfo.Id].Msg.Enqueue(new MsgInfo(dateTime, senderInfo, msg, msgType));
-            Dic[groupInfo.Id].Msg.ToLength(Controller.Config.Instance.HistoryLines);
+            Dic[groupInfo.Id].Msg.ToLength(Config.Instance.HistoryLines);
         }
 
         public string GetMsg(long id)
