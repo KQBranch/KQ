@@ -84,7 +84,6 @@ namespace KQ.View
             {
                 NtfIcon.ShowBalloonTip(500, "New Message", $"From {e.Sender.Name} ({e.Sender.Id}\n{msg}",
                     ToolTipIcon.Info);
-
             }));
 
             HistoryMsg.Friend.AddMsg(e.Sender, msg, time, e.Sender);
@@ -109,7 +108,7 @@ namespace KQ.View
                 NtfIcon.ShowBalloonTip(500, "New Message", $"From {e.Sender.Group.Name} ({e.Sender.Id}\n{msg}",
                     ToolTipIcon.Info);
             }));
-            
+
             HistoryMsg.Group.AddMsg(e.Sender.Group, msg, time, e.Sender);
             return false;
         }
@@ -126,10 +125,19 @@ namespace KQ.View
 
         private void UpdateListBoxItems(ref ListBox listBox, ref HistoryMsgBase msgBase)
         {
-            listBox.Items.Clear();
+            var ids = new List<long>();
+            if (listBox.Items.Count > 0)
+            {
+                foreach (var info in listBox.Items)
+                {
+                    ids.Add(((Model.BaseInfo) info).Id);
+                }
+            }
+
             foreach (var i in msgBase.Dic)
             {
-                listBox.Items.Add(new Model.BaseInfo(i.Value));
+                if (!ids.Contains(i.Key))
+                    listBox.Items.Add(new Model.BaseInfo(i.Value));
             }
         }
 
@@ -158,17 +166,11 @@ namespace KQ.View
                 if (counter == 0)
                 {
                     var contact = session.GetFriendListAsync().Result;
-                    this.Invoke(new Action(() =>
-                    {
-                        UpdateListBoxItems(ref LstContacts, contact);
-                    }));
+                    this.Invoke(new Action(() => { UpdateListBoxItems(ref LstContacts, contact); }));
 
                     var group = session.GetGroupListAsync().Result;
-                                        
-                    this.Invoke(new Action(() =>
-                    {
-                        UpdateListBoxItems(ref LstGroups, group);
-                    }));
+
+                    this.Invoke(new Action(() => { UpdateListBoxItems(ref LstGroups, group); }));
                 }
 
                 if (counter == 5 * 60)
@@ -180,7 +182,6 @@ namespace KQ.View
                 ++counter;
             }
         }
-
 
         private void FrmMain_Load(object sender, EventArgs e)
         {
