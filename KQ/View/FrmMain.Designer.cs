@@ -29,6 +29,8 @@ namespace KQ.View
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
             this.BtnSend = new System.Windows.Forms.Button();
             this.RtbMessage = new System.Windows.Forms.RichTextBox();
             this.TxtSendMsg = new System.Windows.Forms.TextBox();
@@ -43,6 +45,7 @@ namespace KQ.View
             this.LstContacts = new System.Windows.Forms.ListBox();
             this.TapGroups = new System.Windows.Forms.TabPage();
             this.LstGroups = new System.Windows.Forms.ListBox();
+            this.NtfIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.StsStatus.SuspendLayout();
             this.TacMainTabControl.SuspendLayout();
             this.TapMessages.SuspendLayout();
@@ -188,6 +191,12 @@ namespace KQ.View
             this.LstGroups.Size = new System.Drawing.Size(202, 418);
             this.LstGroups.TabIndex = 0;
             // 
+            // NtfIcon
+            // 
+            this.NtfIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("NtfIcon.Icon")));
+            this.NtfIcon.Text = "KQ";
+            this.NtfIcon.Visible = true;
+            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -230,6 +239,7 @@ namespace KQ.View
         private System.Windows.Forms.ListBox LstGroups;
         private System.Windows.Forms.TabPage TabGroupMsg;
         private System.Windows.Forms.ListBox LstGroupMsg;
+        private System.Windows.Forms.NotifyIcon NtfIcon;
     }
 }
 

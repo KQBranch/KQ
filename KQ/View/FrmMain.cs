@@ -67,6 +67,30 @@ namespace KQ.View
             await Task.Run(() => UpdateList(500)).ConfigureAwait(false);
         }
 
+        private async Task<bool> Session_FriendMessageEvt(MiraiHttpSession sender, IFriendMessageEventArgs e)
+        {
+            var msg = MsgParser.GetMsgString(e.Chain);
+            var time = DateTime.Now;
+            if (e.Sender.Id == currentSession && currentType == Model.Enums.SessionType.PrivateMsg)
+            {
+                this.Invoke(new Action(() =>
+                {
+                    RtbMessage.Text += "\r\n" +
+                                       $"{time:dd/MM/yyyy HH:mm:ss} {e.Sender.Name} ({e.Sender.Id}):\r\n{msg}";
+                }));
+            }
+
+            Invoke(new Action(() =>
+            {
+                NtfIcon.ShowBalloonTip(500, "New Message", $"From {e.Sender.Name} ({e.Sender.Id}\n{msg}",
+                    ToolTipIcon.Info);
+
+            }));
+
+            HistoryMsg.Friend.AddMsg(e.Sender, msg, time, e.Sender);
+            return false;
+        }
+
         private async Task<bool> Session_GroupMessageEvt(MiraiHttpSession sender, IGroupMessageEventArgs e)
         {
             var msg = MsgParser.GetMsgString(e.Chain);
@@ -80,11 +104,13 @@ namespace KQ.View
                 }));
             }
 
-            HistoryMsg.Group.AddMsg(
-                e.Sender.Group,
-                msg,
-                time,
-                e.Sender);
+            this.Invoke(new Action(() =>
+            {
+                NtfIcon.ShowBalloonTip(500, "New Message", $"From {e.Sender.Group.Name} ({e.Sender.Id}\n{msg}",
+                    ToolTipIcon.Info);
+            }));
+            
+            HistoryMsg.Group.AddMsg(e.Sender.Group, msg, time, e.Sender);
             return false;
         }
 
@@ -122,6 +148,7 @@ namespace KQ.View
             while (true)
             {
                 TssCurrentQInfo.Text = $"ID: {session.QQNumber} | Connection: {session.Connected}";
+
                 UpdateListBoxItems(ref LstSessions, ref HistoryMsg.Friend);
                 UpdateListBoxItems(ref LstGroupMsg, ref HistoryMsg.Group);
 
@@ -144,22 +171,6 @@ namespace KQ.View
             }
         }
 
-        private async Task<bool> Session_FriendMessageEvt(MiraiHttpSession sender, IFriendMessageEventArgs e)
-        {
-            var msg = MsgParser.GetMsgString(e.Chain);
-            var time = DateTime.Now;
-            if (e.Sender.Id == currentSession && currentType == Model.Enums.SessionType.PrivateMsg)
-            {
-                this.Invoke(new Action(() =>
-                {
-                    RtbMessage.Text += "\r\n" +
-                                       $"{time:dd/MM/yyyy HH:mm:ss} {e.Sender.Name} ({e.Sender.Id}):\r\n{msg}";
-                }));
-            }
-
-            HistoryMsg.Friend.AddMsg(e.Sender, msg, time, e.Sender);
-            return false;
-        }
 
         private void FrmMain_Load(object sender, EventArgs e)
         {
