@@ -171,6 +171,7 @@ namespace KQ.View
             this.LstContacts.Name = "LstContacts";
             this.LstContacts.Size = new System.Drawing.Size(202, 418);
             this.LstContacts.TabIndex = 0;
+            this.LstContacts.SelectedIndexChanged += new System.EventHandler(this.LstContacts_SelectedIndexChanged);
             // 
             // TapGroups
             // 
@@ -191,6 +192,7 @@ namespace KQ.View
             this.LstGroups.Name = "LstGroups";
             this.LstGroups.Size = new System.Drawing.Size(202, 418);
             this.LstGroups.TabIndex = 0;
+            this.LstGroups.SelectedIndexChanged += new System.EventHandler(this.LstGroups_SelectedIndexChanged);
             // 
             // NtfIcon
             // 
