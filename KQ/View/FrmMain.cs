@@ -61,10 +61,31 @@ namespace KQ.View
             session.FriendMessageEvt += Session_FriendMessageEvt;
             session.GroupNameChangedEvt += Session_GroupNameChangedEvt;
             session.GroupMessageEvt += Session_GroupMessageEvt;
+            session.DisconnectedEvt += Session_DisconnectedEvt;
+            session.BotOnlineEvt += Session_BotOnlineEvt;
 
             TssCurrentQInfo.Text = $"ID: {session.QQNumber} | Connection: {session.Connected}";
 
             await Task.Run(() => UpdateList(500)).ConfigureAwait(false);
+        }
+
+        private async Task<bool> Session_BotOnlineEvt(MiraiHttpSession sender, IBotOnlineEventArgs e)
+        {
+            this.Invoke(new Action(() =>
+            {
+                TssCurrentQInfo.Text = $"ID: {session.QQNumber} | Connection: {session.Connected}";
+            }));
+            return false;
+        }
+
+        private async Task<bool> Session_DisconnectedEvt(MiraiHttpSession sender, Exception e)
+        {
+            // TODO: RECONNECT
+            this.Invoke(new Action(() =>
+            {
+                TssCurrentQInfo.Text = $"ID: {session.QQNumber} | Connection: {session.Connected}";
+            }));
+            return false;
         }
 
         private async Task<bool> Session_FriendMessageEvt(MiraiHttpSession sender, IFriendMessageEventArgs e)
@@ -155,8 +176,6 @@ namespace KQ.View
             int counter = 0;
             while (true)
             {
-                TssCurrentQInfo.Text = $"ID: {session.QQNumber} | Connection: {session.Connected}";
-
                 this.Invoke(new Action(() =>
                 {
                     UpdateListBoxItems(ref LstSessions, ref HistoryMsg.Friend);
