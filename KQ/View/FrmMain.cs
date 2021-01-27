@@ -149,16 +149,26 @@ namespace KQ.View
             {
                 TssCurrentQInfo.Text = $"ID: {session.QQNumber} | Connection: {session.Connected}";
 
-                UpdateListBoxItems(ref LstSessions, ref HistoryMsg.Friend);
-                UpdateListBoxItems(ref LstGroupMsg, ref HistoryMsg.Group);
+                this.Invoke(new Action(() =>
+                {
+                    UpdateListBoxItems(ref LstSessions, ref HistoryMsg.Friend);
+                    UpdateListBoxItems(ref LstGroupMsg, ref HistoryMsg.Group);
+                }));
 
                 if (counter == 0)
                 {
                     var contact = session.GetFriendListAsync().Result;
-                    UpdateListBoxItems(ref LstContacts, contact);
+                    this.Invoke(new Action(() =>
+                    {
+                        UpdateListBoxItems(ref LstContacts, contact);
+                    }));
 
                     var group = session.GetGroupListAsync().Result;
-                    UpdateListBoxItems(ref LstGroups, group);
+                                        
+                    this.Invoke(new Action(() =>
+                    {
+                        UpdateListBoxItems(ref LstGroups, group);
+                    }));
                 }
 
                 if (counter == 5 * 60)
