@@ -20,6 +20,7 @@ namespace KQ.View
     {
         long currentSession = 0;
         Model.Enums.SessionType currentType = Model.Enums.SessionType.None;
+        private string currentName = null;
         MiraiHttpSession session;
 
         public FrmMain()
@@ -70,6 +71,7 @@ namespace KQ.View
         }
 
         #region View: Status changed
+
         private async Task<bool> Session_BotOnlineEvt(MiraiHttpSession sender, IBotOnlineEventArgs e)
         {
             this.Invoke(new Action(() =>
@@ -88,6 +90,7 @@ namespace KQ.View
             }));
             return false;
         }
+
         #endregion
 
         private async Task<bool> Session_FriendMessageEvt(MiraiHttpSession sender, IFriendMessageEventArgs e)
@@ -147,6 +150,7 @@ namespace KQ.View
         }
 
         #region View: Update
+
         private void UpdateListBoxItems(ref ListBox listBox, ref HistoryMsgBase msgBase)
         {
             var ids = new List<long>();
@@ -154,7 +158,7 @@ namespace KQ.View
             {
                 foreach (var info in listBox.Items)
                 {
-                    ids.Add(((Model.BaseInfo)info).Id);
+                    ids.Add(((Model.BaseInfo) info).Id);
                 }
             }
 
@@ -204,6 +208,7 @@ namespace KQ.View
                 ++counter;
             }
         }
+
         #endregion
 
         private void FrmMain_Load(object sender, EventArgs e)
@@ -211,41 +216,51 @@ namespace KQ.View
         }
 
         #region View:List Selected
+
         private void LstSessions_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (LstSessions.SelectedItem == null) return;
-            currentSession = ((Model.BaseInfo)LstSessions.SelectedItem).Id;
+            currentSession = ((Model.BaseInfo) LstSessions.SelectedItem).Id;
+            currentName = ((Model.BaseInfo) LstSessions.SelectedItem).Name;
             currentType = Model.Enums.SessionType.PrivateMsg;
             RtbMessage.Text = "Change session to " + currentSession + "\r\n";
             RtbMessage.Text += HistoryMsg.Friend.GetMsg(currentSession);
+            LstGroups.SelectedItem = LstGroupMsg.SelectedItem = LstContacts.SelectedItem = null;
         }
 
         private void LstContacts_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (LstContacts.SelectedItem == null) return;
-            currentSession = ((Model.BaseInfo)LstContacts.SelectedItem).Id;
+            currentSession = ((Model.BaseInfo) LstContacts.SelectedItem).Id;
+            currentName = ((Model.BaseInfo) LstContacts.SelectedItem).Name;
             currentType = Model.Enums.SessionType.PrivateMsg;
             RtbMessage.Text = "Change session to " + currentSession + "\r\n";
             RtbMessage.Text += HistoryMsg.Friend.GetMsg(currentSession);
+            LstGroups.SelectedItem = LstGroupMsg.SelectedItem = LstSessions.SelectedItem = null;
         }
 
         private void LstGroupMsg_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (LstGroupMsg.SelectedItem == null) return;
-            currentSession = ((Model.BaseInfo)LstGroupMsg.SelectedItem).Id;
+            currentSession = ((Model.BaseInfo) LstGroupMsg.SelectedItem).Id;
+            currentName = ((Model.BaseInfo) LstGroupMsg.SelectedItem).Name;
             currentType = Model.Enums.SessionType.GroupMsg;
             RtbMessage.Text = "Change session to " + currentSession + "\r\n";
             RtbMessage.Text += HistoryMsg.Group.GetMsg(currentSession);
+            LstGroups.SelectedItem = LstContacts.SelectedItem = LstSessions.SelectedItem = null;
         }
 
         private void LstGroups_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (LstGroups.SelectedItem == null) return;
-            currentSession = ((Model.BaseInfo)LstGroups.SelectedItem).Id;
+            currentSession = ((Model.BaseInfo) LstGroups.SelectedItem).Id;
+            currentName = ((Model.BaseInfo) LstGroups.SelectedItem).Name;
             currentType = Model.Enums.SessionType.GroupMsg;
             RtbMessage.Text = "Change session to " + currentSession + "\r\n";
             RtbMessage.Text += HistoryMsg.Group.GetMsg(currentSession);
+            LstGroupMsg.SelectedItem = LstContacts.SelectedItem = LstSessions.SelectedItem = null;
         }
+
         #endregion
 
         private void BtnSend_Click(object sender, EventArgs e)
@@ -263,7 +278,7 @@ namespace KQ.View
                     new PlainMessage($"{msg}")
                 });
                 HistoryMsg.Friend.AddMsg(
-                    new Model.BaseInfo(currentSession, null),
+                    new Model.BaseInfo(currentSession, currentName),
                     msg, time,
                     new Model.BaseInfo(Config.Instance.QQNumber, "Me")
                 );
@@ -275,7 +290,7 @@ namespace KQ.View
                     new PlainMessage($"{msg}")
                 });
                 HistoryMsg.Group.AddMsg(
-                    new Model.BaseInfo(currentSession, null),
+                    new Model.BaseInfo(currentSession, currentName),
                     msg, time,
                     new Model.BaseInfo(Config.Instance.QQNumber, "Me")
                 );
@@ -287,6 +302,5 @@ namespace KQ.View
             RtbMessage.SelectionStart = RtbMessage.Text.Length;
             RtbMessage.ScrollToCaret();
         }
-
     }
 }
