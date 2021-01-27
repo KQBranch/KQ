@@ -72,6 +72,7 @@ namespace KQ.View
             this.RtbMessage.Size = new System.Drawing.Size(627, 312);
             this.RtbMessage.TabIndex = 1;
             this.RtbMessage.Text = "";
+            this.RtbMessage.ContentsResized += new System.Windows.Forms.ContentsResizedEventHandler(this.RtbMessage_ContentsResized);
             // 
             // TxtSendMsg
             // 

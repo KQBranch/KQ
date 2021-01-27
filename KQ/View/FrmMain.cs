@@ -237,5 +237,11 @@ namespace KQ.View
                 );
             }
         }
+
+        private void RtbMessage_ContentsResized(object sender, ContentsResizedEventArgs e)
+        {
+            RtbMessage.SelectionStart = RtbMessage.Text.Length;
+            RtbMessage.ScrollToCaret();
+        }
     }
 }
